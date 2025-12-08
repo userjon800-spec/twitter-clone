@@ -13,9 +13,12 @@ import {
   FormItem,
   FormMessage,
 } from "../ui/form";
+import axios from "axios";
 import { Input } from "../ui/input";
 import Button from "../ui/buttons";
 import useLoginModal from "@/hooks/useLoginModal";
+import { Alert, AlertDescription, AlertTitle, } from "../ui/alert";
+import { AlertCircle } from "lucide-react";
 const RegisterModal = () => {
   const [step, setStep] = useState(1);
   const [data, setData] = useState({ name: "", email: "" });
@@ -29,7 +32,7 @@ const RegisterModal = () => {
     step === 1 ? (
       <RegisterStep1 setData={setData} setStep={setStep} />
     ) : (
-      <RegisterStep2 />
+      <RegisterStep2 data={data} />
     );
   let footer = (
     <div className="text-neutral-400 text-center mb-4">
@@ -66,6 +69,7 @@ function RegisterStep1({
   setData: Dispatch<SetStateAction<{ name: string; email: string }>>;
   setStep: Dispatch<SetStateAction<number>>;
 }) {
+  const [error, setError] = useState("");
   let form = useForm<z.infer<typeof registerStep1Schema>>({
     resolver: zodResolver(registerStep1Schema),
     defaultValues: {
@@ -73,15 +77,37 @@ function RegisterStep1({
       email: "",
     },
   });
-  function onSubmit(values: z.infer<typeof registerStep1Schema>) {
-    setData(values);
-    setStep(2);
+  async function onSubmit(values: z.infer<typeof registerStep1Schema>) {
+    try {
+      let { data } = await axios.post("/api/auth/register?step=1", values);
+      if (data.success) {
+        setData(values);
+        setStep(2);
+      }
+    } catch (error: any) {
+      if (error.response.data.error) {
+        setError(error.response.data.error);
+      } else {
+        setError("Nimadir noto'g'ri ketdi, iltimos keyinroq urinib ko'ring");
+      }
+      console.log(
+        "Register step1 error:",
+        error?.response?.data ?? error?.message ?? error
+      );
+    }
   }
   let { isSubmitting } = form.formState;
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-12">
         <h3 className="text-3xl font-semibold text-white">Create an account</h3>
+        {error && (
+          <Alert variant={"destructive"}>
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         <FormField
           control={form.control}
           name="name"
@@ -120,7 +146,9 @@ function RegisterStep1({
   );
 }
 
-function RegisterStep2() {
+function RegisterStep2({ data }: { data: { name: string; email: string } }) {
+  const [error, setError] = useState("");
+  let register = useRegisterModal();
   let form = useForm<z.infer<typeof registerStep2Schema>>({
     resolver: zodResolver(registerStep2Schema),
     defaultValues: {
@@ -128,13 +156,38 @@ function RegisterStep2() {
       username: "",
     },
   });
-  function onSubmit(values: z.infer<typeof registerStep2Schema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof registerStep2Schema>) {
+    try {
+      let { data: response } = await axios.post("/api/auth/register?step=2", {
+        ...data,
+        ...values,
+      });
+      if (response.success) {
+        register.onClose();
+      }
+    } catch (error: any) {
+      if (error.response.data.error) {
+        setError(error.response.data.error);
+      } else {
+        setError("Nimadir noto'g'ri ketdi, iltimos keyinroq urinib ko'ring");
+      }
+      console.log(
+        "Register step2 error:",
+        error?.response?.data ?? error?.message ?? error
+      );
+    }
   }
   let { isSubmitting } = form.formState;
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-12">
+        {error && (
+          <Alert variant={"destructive"}>
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         <FormField
           control={form.control}
           name="username"

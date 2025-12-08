@@ -6,9 +6,9 @@ import { AiFillGithub } from "react-icons/ai";
 import "./style.css";
 import useRegisterModal from "@/hooks/useRegisterModal";
 import { useCallback } from "react";
-import RegisterModal from "../modals/registerModal";
+import RegisterModal from "../moduls/registerModal";
 import useLoginModal from "@/hooks/useLoginModal";
-import LoginModal from "../modals/loginModal";
+import LoginModal from "../moduls/loginModal";
 
 const Auth = () => {
   let registerModal = useRegisterModal();
