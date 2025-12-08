@@ -9,8 +9,10 @@ import { useCallback } from "react";
 import RegisterModal from "../moduls/registerModal";
 import useLoginModal from "@/hooks/useLoginModal";
 import LoginModal from "../moduls/loginModal";
-
+import { signIn, useSession } from "next-auth/react";
 const Auth = () => {
+  let { data } = useSession();
+  console.log(data);
   let registerModal = useRegisterModal();
   let loginModal = useLoginModal();
   let onOpenRegisterModal = useCallback(() => {
@@ -46,6 +48,7 @@ const Auth = () => {
             <h2 className="font-bold text-3xl mb-4">Join today.</h2>
             <div className="flex flex-col space-y-2">
               <Buttons
+                onClick={() => signIn("google")}
                 label={
                   <div className="flex gap-2 items-center justify-center">
                     <FcGoogle /> Sinup with google
@@ -56,6 +59,7 @@ const Auth = () => {
                 type="button"
               />
               <Buttons
+                onClick={() => signIn("github")}
                 label={
                   <div className="flex gap-2 items-center justify-center">
                     <AiFillGithub /> Sinup with gitHub

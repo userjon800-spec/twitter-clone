@@ -18,6 +18,7 @@ import Buttons from "../ui/buttons";
 import useRegisterModal from "@/hooks/useRegisterModal";
 import { useCallback, useState } from "react";
 import axios from "axios";
+import { signIn } from "next-auth/react";
 export default function LoginModal() {
   const [error, setError] = useState("");
   let loginModal = useLoginModal();
@@ -37,6 +38,7 @@ export default function LoginModal() {
     try {
       const { data } = await axios.post("/api/auth/login", values);
       if (data.success) {
+        signIn("credentials", values)
         loginModal.onClose();
       }
     } catch (error: any) {
