@@ -10,6 +10,7 @@ interface ButtonProps {
   outline?: boolean;
   type: "button" | "submit";
   onClick?: () => void;
+   classNames?: string
 }
 const Buttons = ({
   label,
@@ -20,6 +21,7 @@ const Buttons = ({
   outline,
   type,
   onClick,
+ classNames
 }: ButtonProps) => {
   return (
     <button
