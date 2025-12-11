@@ -34,16 +34,15 @@ export const authOption: AuthOptions = {
   callbacks: {
     async session({ session }) {
       await connectToDatabase();
-      let isExistingUser = await User.findOne({ email: session.user?.email });
-      if (isExistingUser) {
-        let newUser = await User.create({
+      let user = await User.findOne({ email: session.user?.email });
+      if (!user) {
+        user = await User.create({
           email: session.user?.email,
           name: session.user?.name,
           profileImage: session.user?.image,
         });
-        session.currentUser = newUser;
       }
-      session.currentUser = isExistingUser;
+      session.currentUser = user;
       return session;
     },
   },
