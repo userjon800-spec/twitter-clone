@@ -7,7 +7,7 @@ import Link from "next/link";
 import User from "./user";
 import { useUsers } from "@/hooks/useUsers";
 const FollowBar = () => {
-  let {isLoading, users} = useUsers(5)
+  let { isLoading, users } = useUsers(5);
   return (
     <div className="py-4 hidden lg:block w-[266px]">
       <div className="bg-neutral-800 rounded-xl ">
@@ -29,7 +29,7 @@ const FollowBar = () => {
         ) : (
           <div className="flex flex-col mt-4">
             {users.map((user: IUser) => (
-              <Link key={user._id} href={`/profile/${user._id}`}>
+              <Link key={user?._id} href={`/profile/${user?._id}`}>
                 <User user={user} />
               </Link>
             ))}

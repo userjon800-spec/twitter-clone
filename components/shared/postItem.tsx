@@ -9,6 +9,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { FaHeart } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 interface Props {
   post: IPost;
   user: IUser;
@@ -16,13 +17,14 @@ interface Props {
 }
 const PostItem = ({ post, user, setPosts }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
-  let onDelete = async () => {
-    // e.stopPropagation();
+  let router = useRouter();
+  let onDelete = async (e: any) => {
+    e.stopPropagation();
     try {
       setIsLoading(true);
       await axios.delete(`/api/posts`, {
         data: { postId: post._id },
-      });      
+      });
       setIsLoading(false);
       setPosts((prev) => prev.filter((p) => p._id !== post._id));
     } catch (error) {
@@ -30,9 +32,48 @@ const PostItem = ({ post, user, setPosts }: Props) => {
       return toast({
         title: "Error",
         description: "Nimadir xato ketdi, Iltimos keyinroq urinib ko'ring",
-        variant:"destructive"
+        variant: "destructive",
       });
     }
+  };
+  let onLike = async (e: any) => {
+    e.stopPropagation();
+    try {
+      setIsLoading(true);
+      if (post.hasLiked) {
+        await axios.delete("/api/likes", {
+          data: {
+            postId: post._id,
+            userId: user._id,
+          },
+        });
+        let updatePosts = { ...post, hasLiked: false, likes: post.likes - 1 };
+        setPosts((prew) =>
+          prew.map((p) => (p._id === post._id ? updatePosts : p))
+        );
+      } else {
+        await axios.put("/api/likes", {
+          postId: post._id,
+          userId: user._id,
+        });
+        let updatePosts = { ...post, hasLiked: true, likes: post.likes + 1 };
+        setPosts((prew) =>
+          prew.map((p) => (p._id === post._id ? updatePosts : p))
+        );
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      return toast({
+        title: "Error",
+        description: "Nimadir xato ketdi, Iltimos keyinroq urinib ko'ring",
+        variant: "destructive",
+      });
+    }
+  };
+  let goToPost = () => {
+    router.push(`/posts/${post._id}`);
   };
   return (
     <div className="border-b-[1px] border-neutral-800 p-5 cursor-pointer hover:bg-neutral-900 transition relative">
@@ -43,7 +84,10 @@ const PostItem = ({ post, user, setPosts }: Props) => {
           </div>
         </div>
       )}
-      <div className="flex flex-row items-center gap-3">
+      <div
+        className="flex flex-row items-center gap-3 cursor-pointer"
+        onClick={() => goToPost()}
+      >
         <Avatar>
           <AvatarImage src={post?.user?.profileImage} />
           <AvatarFallback>{post?.user?.name[0]}</AvatarFallback>
@@ -55,8 +99,8 @@ const PostItem = ({ post, user, setPosts }: Props) => {
             </p>
             <span className="text-neutral-500 cursor-pointer hover:underline hidden md:block">
               {post?.user?.username
-                ? `${sliceText(post?.user?.username??"", 16)}`
-                : sliceText(post?.user?.email??"", 16)}
+                ? `${sliceText(post?.user?.username ?? "", 16)}`
+                : sliceText(post?.user?.email ?? "", 16)}
             </span>
             <span className="text-neutral-500 text-sm">
               {formatDistanceToNowStrict(new Date(post?.createdAt))} ago
@@ -66,18 +110,19 @@ const PostItem = ({ post, user, setPosts }: Props) => {
           <div className="flex flex-row items-center mt-3 gap-10">
             <div className="flex flex-row items-center text-neutral-500 gap-2 cursor-pointer transition hover:text-sky-500">
               <AiOutlineMessage size={20} />
-              <p>{post?.comments.length || 0}</p>
+              <p>{post?.comments || 0}</p>
             </div>
             <div
               className={`flex flex-row items-center text-neutral-500 gap-2 cursor-pointer transition hover:text-red-500`}
+              onClick={onLike}
             >
-              <FaHeart size={20} color={"red"} />
-              <p>{post?.likes.length}</p>
+              <FaHeart size={20} color={post?.hasLiked ? "red" : ""} />
+              <p>{post?.likes}</p>
             </div>
             {post?.user?._id === user._id && (
               <div
                 className={`flex flex-row items-center text-neutral-500 gap-2 cursor-pointer transition hover:text-red-500`}
-                onClick={()=> onDelete()}
+                onClick={onDelete}
               >
                 <AiFillDelete size={20} />
               </div>

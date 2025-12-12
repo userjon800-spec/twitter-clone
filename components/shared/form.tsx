@@ -18,18 +18,40 @@ const Form = ({ placeholder, user, isComment, setPosts }: Props) => {
   let onSubmit = async () => {
     try {
       setIsLoading(true);
-      let { data } = await axios.post("/api/posts", { body, userId: user._id });
-      let newPost = {
-  ...data,
-  user: data.user ?? user, 
-};
-      setPosts(prew=> [newPost,...prew])
+      if (isComment) {
+        let { data } = await axios.post("/api/comments", {
+          body,
+          userId: user._id,
+          postId,
+        });
+        let newComment = {
+          ...data,
+          user,
+          likes: 0,
+          hasLiked: false,
+        };
+        setPosts((prew) => [newComment, ...prew]);
+      } else {
+        let { data } = await axios.post("/api/posts", {
+          body,
+          userId: user._id,
+        });
+        setPosts((prev) => [data, ...prev]);
+        toast({
+          title: "Succes",
+          description: "Post muaffaqiyatli yaratildi",
+        });
+      }
+      // let newPost = {
+      //   ...data,
+      //   user: data.user ?? user,
+      //   likes: 0,
+      //   hasLiked: false,
+      //   comments: 0,
+      // };
+      // setPosts((prew) => [newPost, ...prew]);
       setIsLoading(false);
       setBody("");
-      toast({
-        title: "Succes",
-        description: "Post muaffaqiyatli yaratildi",
-      });
     } catch (error) {
       toast({
         title: "Error",
@@ -38,7 +60,6 @@ const Form = ({ placeholder, user, isComment, setPosts }: Props) => {
       });
       setIsLoading(false);
     }
-    
   };
   return (
     <div className="border-b-[1px] border-neutral-800 px-5 py-2">
@@ -63,7 +84,7 @@ const Form = ({ placeholder, user, isComment, setPosts }: Props) => {
               label={isComment ? "Reply" : "Post"}
               classNames="px-8"
               disabled={isLoading || !body}
-              onClick={()=>onSubmit()}
+              onClick={() => onSubmit()}
               // isLoading={isLoading}
               type="submit"
             />
