@@ -51,7 +51,7 @@ const Auth = () => {
                 onClick={() => signIn("google")}
                 label={
                   <div className="flex gap-2 items-center justify-center">
-                    <FcGoogle /> Sinup with google
+                    <FcGoogle /> Sign up with Google
                   </div>
                 }
                 fullWidhth
@@ -62,7 +62,7 @@ const Auth = () => {
                 onClick={() => signIn("github")}
                 label={
                   <div className="flex gap-2 items-center justify-center">
-                    <AiFillGithub /> Sinup with gitHub
+                    <AiFillGithub /> Sign up with GitHub
                   </div>
                 }
                 fullWidhth

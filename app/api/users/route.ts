@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     let { searchParams } = new URL(req.url);
     let limit = searchParams.get("limit");
     let users = await User.find({})
-      .select("name username _id profileImage email")
+      .select("name username _id profileImage email createdAt ")
       .limit(Number(limit));
     return NextResponse.json(users.map(serializeUser));
   } catch (error) {

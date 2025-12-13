@@ -12,7 +12,7 @@ interface Props {
   isComment?: boolean;
   setPosts: Dispatch<SetStateAction<IPost[]>>;
 }
-const Form = ({ placeholder, user, isComment, setPosts }: Props) => {
+const Form = ({ placeholder, user, isComment, setPosts, postId }: Props) => {
   const [body, setBody] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   let onSubmit = async () => {
