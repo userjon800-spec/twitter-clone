@@ -8,7 +8,7 @@ export async function PUT(req: Request) {
   try {
     await connectToDatabase();
     let { currentUser }: any = await getServerSession(authOption);
-    let { userId,currentUserId } = await req.json();
+    let { userId, currentUserId } = await req.json();
     await User.findByIdAndUpdate(userId, {
       $push: { followers: currentUserId },
     });
@@ -25,7 +25,7 @@ export async function DELETE(req: Request) {
   try {
     await connectToDatabase();
     let { currentUser }: any = await getServerSession(authOption);
-    let { userId,currentUserId } = await req.json();
+    let { userId, currentUserId } = await req.json();
     await User.findByIdAndUpdate(userId, {
       $pull: { followers: currentUserId },
     });
@@ -41,6 +41,17 @@ export async function DELETE(req: Request) {
 export async function GET(req: Request) {
   try {
     await connectToDatabase();
+    let { searchParams } = new URL(req.url);
+    let userId = searchParams.get("userId");
+    let state = searchParams.get("state");
+    let user = await User.findById(userId);
+    if (state === "following") {
+      let following = await User.find({ _id: { $in: user.following } });
+      return NextResponse.json(following);
+    } else if (state === "followers") {
+      let followers = await User.find({ _id: { $in: user.followers } });
+      return NextResponse.json(followers);
+    }
   } catch (error) {
     const result = error as Error;
     return NextResponse.json({ error: result.message }, { status: 400 });

@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import EditModal from "../moduls/editModal";
 import useEditModal from "@/hooks/useEditModal";
+import User from "../shared/user";
 const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
   // const { isLoading, setIsLoading, onError } = useAction()
   const [open, setOpen] = useState(false);
@@ -21,7 +22,7 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
   const [followers, setFollowers] = useState<IUser[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [state, setState] = useState<"following" | "followers">("following");
-  const editModal = useEditModal()
+  const editModal = useEditModal();
   const router = useRouter();
   const onFollow = async () => {
     try {
@@ -53,10 +54,46 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
       setIsLoading(false);
     }
   };
+  console.log(following);
+
   const onFollowUser = async (userId: string, type: string) => {};
-  const openFollowModal = async () => {};
-  const onFollowing = async () => {};
-  const onFollowers = async () => {};
+  const getFollowUser = async (userId: string, type: string) => {
+    try {
+      setIsFetching(true);
+      const { data } = await axios.get(
+        `/api/follows?state=${type}&userId=${userId}`
+      );
+      setIsFetching(false);
+      return data;
+    } catch (error) {
+      console.log(error);
+      setIsFetching(false);
+    }
+  };
+  const openFollowModal = async () => {
+    try {
+      setOpen(true);
+      let data = await getFollowUser(user._id, "following");
+      setFollowing(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const onFollowing = async () => {
+    setState("following");
+    if (following.length === 0) {
+      let data = await getFollowUser(user._id, "following");
+      setFollowing(data);
+    }
+  };
+  const onFollowers = async () => {
+    setState("followers");
+    if (followers.length === 0) {
+      let data = await getFollowUser(user._id, "followers");
+      setFollowers(data);
+    }
+  };
+  let onChangeFollowing = async (data: IUser[]) => {};
   return (
     <>
       <EditModal user={user} />
@@ -88,16 +125,13 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
             />
           )}
         </div>
-
         <div className="mt-8 px-4">
           <div className="flex flex-col">
             <p className="text-white text-2xl font-semibold">{user.name}</p>
           </div>
-
           <p className="text-md text-neutral-500">
             {user.username ? `@${user.username}` : user.email}
           </p>
-
           <div className="flex flex-col mt-4">
             <p className="text-white">{user.bio}</p>
             <div className="flex gap-4 items-center">
@@ -119,7 +153,6 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                 </p>
               </div>
             </div>
-
             <div className="flex flex-row items-center mt-6 gap-6">
               <div
                 className="flex flex-row items-center gap-1 hover:underline cursor-pointer"
@@ -128,7 +161,6 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                 <p className="text-white">{user.following}</p>
                 <p className="text-neutral-500">Following</p>
               </div>
-
               <div
                 className="flex flex-row items-center gap-1 hover:underline cursor-pointer"
                 onClick={openFollowModal}
@@ -169,7 +201,6 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                 Followers
               </div>
             </div>
-
             {isFetching ? (
               <div className="flex justify-center items-center h-24">
                 <Loader2 className="animate-spin text-sky-500" />
@@ -182,7 +213,15 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                       No following
                     </div>
                   ) : (
-                    ""
+                    following.map((user) => (
+                      <User
+                        user={user}
+                        key={user._id}
+                        isFollow
+                        following={following}
+                        onChangeFollowing={onChangeFollowing}
+                      />
+                    ))
                     // following.map(user => <FollowUser key={user._id} user={user} setFollowing={setFollowing} />)
                   )
                 ) : followers.length === 0 ? (
@@ -190,14 +229,22 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                     No followers
                   </div>
                 ) : (
-                  ""
+                  followers.map((user) => (
+                    <User
+                      user={user}
+                      key={user._id}
+                      isFollow
+                      following={following}
+                      onChangeFollowing={onChangeFollowing}
+                    />
+                  ))
                   // followers.map(user => <FollowUser key={user._id} user={user} setFollowing={setFollowing} />)
                 )}
               </div>
             )}
           </>
         }
-        footer={<>das</>}
+        footer={<></>}
       />
     </>
   );
