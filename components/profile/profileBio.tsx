@@ -11,6 +11,8 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import EditModal from "../moduls/editModal";
+import useEditModal from "@/hooks/useEditModal";
 const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
   // const { isLoading, setIsLoading, onError } = useAction()
   const [open, setOpen] = useState(false);
@@ -19,7 +21,7 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
   const [followers, setFollowers] = useState<IUser[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [state, setState] = useState<"following" | "followers">("following");
-  // const editModal = useEditModal()
+  const editModal = useEditModal()
   const router = useRouter();
   const onFollow = async () => {
     try {
@@ -57,7 +59,7 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
   const onFollowers = async () => {};
   return (
     <>
-      {/* <EditModal user={user} /> */}
+      <EditModal user={user} />
       <div className="border-b-[1px] border-neutral-800 pb-4">
         <div className="flex justify-end p-2">
           {userId === user._id ? (
@@ -65,7 +67,7 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
               label={"Edit profile"}
               type="button"
               secondary
-              // onClick={() => editModal.onOpen()}
+              onClick={() => editModal.onOpen()}
             />
           ) : user.isFollowing ? (
             <Buttons

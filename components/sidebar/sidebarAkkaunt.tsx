@@ -3,7 +3,7 @@ import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Loader2, MoreHorizontal } from "lucide-react";
+import {  Loader2, MoreHorizontal } from "lucide-react";
 import { IUser } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 interface Props {
@@ -12,6 +12,12 @@ interface Props {
 
 const SidebarAkkaunt = ({ user }: Props) => {
   const { data, status } = useSession()
+  if (status == "loading")
+    return (
+      <div className="flex items-center justify-center">
+        <Loader2 className="animate-spin text-sky-500" />
+      </div>
+    );
   return (
     <>
       {/* MOBIE SIDEBAR ACCOUNT */}

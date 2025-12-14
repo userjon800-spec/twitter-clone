@@ -3,7 +3,7 @@ import { IPost, IUser } from "@/types";
 import { Dispatch, SetStateAction, useState } from "react";
 import Buttons from "../ui/buttons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 interface Props {
   placeholder: string;

@@ -8,7 +8,7 @@ import { AiFillDelete, AiOutlineMessage } from "react-icons/ai";
 import { formatDistanceToNowStrict } from "date-fns";
 import { FaHeart } from "react-icons/fa";
 import axios from "axios";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 interface Props {
   post: IPost;
