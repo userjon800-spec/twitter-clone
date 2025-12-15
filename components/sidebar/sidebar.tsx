@@ -7,7 +7,6 @@ import SidebarItems from "./sidebarItems";
 import SidebarPostButton from "./sidebarPostButton";
 import SidebarAkkaunt from "./sidebarAkkaunt";
 import { IUser } from "@/types";
-
 const Sidebar = ({ user }: { user: IUser }) => {  
   let sidebarItems = [
     { label: "Home", path: "/", icon: Home },
@@ -15,6 +14,7 @@ const Sidebar = ({ user }: { user: IUser }) => {
       label: "Notifications",
       path: `/notifications/${user?._id}`,
       icon: Bell,
+      notification: user?.hasNewNotifications
     },
     {
       label: "Profile",

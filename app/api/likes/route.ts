@@ -1,4 +1,6 @@
+import Notification from "@/database/notificationModel";
 import Post from "@/database/postModel";
+import User from "@/database/userModel";
 import { authOption } from "@/lib/authOptions";
 import { connectToDatabase } from "@/lib/mongoose";
 import { serializePost } from "@/lib/serializePost";
@@ -9,14 +11,15 @@ export async function PUT(req: Request) {
   try {
     await connectToDatabase();
     let { postId, userId } = await req.json();
-    // let post = await Post.findByIdAndUpdate(
-    //   postId,
-    //   {
-    //     $push: { likes: userId },
-    //   },
-    //   { new: true }
-    // );
     let post = await Post.findById(postId);
+    await Notification.create({
+      user: String(post.user),
+      body: "Kimdir sizning postingizni yoqtirdi",
+    });
+    await User.findOneAndUpdate(
+      { _id: String(post.user) },
+      { $set: { hasNewNotifications: true } }
+    );
     if (!post)
       return NextResponse.json({ error: "Post topilmadi" }, { status: 404 });
     if (!post.likes.includes(userId)) {

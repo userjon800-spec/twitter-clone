@@ -19,6 +19,10 @@ interface Props {
 const CommentItem = ({ comment, user, setComments, comments }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  let goToProfile = (e:any)=>{
+    e.stopPropogation()
+    router.push(`/profile/${user._id}`)
+  }
   const onLike = async () => {
     try {
       setIsLoading(true);
@@ -70,7 +74,6 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
       setIsLoading(false);
     }
   };
-  const goToProfile = (evt: any) => {};
   return (
     <div className="border-b-[1px] relative border-neutral-800 p-5 cursor-pointer hover:bg-neutral-900 transition">
       {isLoading && (

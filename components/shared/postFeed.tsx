@@ -5,8 +5,6 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import PostItem from "./postItem";
 import axios from "axios";
-// import useAction from '@/hooks/'
-// import { getUserPosts } from '@/actions/user.action'
 
 interface Props {
   userId: string;

@@ -1,4 +1,5 @@
 // import Notification from '@/database/notification.model'
+import Notification from "@/database/notificationModel";
 import User from "@/database/userModel";
 import { authOption } from "@/lib/authOptions";
 import { connectToDatabase } from "@/lib/mongoose";
@@ -15,6 +16,14 @@ export async function PUT(req: Request) {
     await User.findByIdAndUpdate(currentUserId, {
       $push: { following: userId },
     });
+    await Notification.create({
+      user: userId,
+      body: "Someone followed you post",
+    });
+    await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: { hasNewNotifications: true } }
+    );
     return NextResponse.json({ message: "Followed" });
   } catch (error) {
     const result = error as Error;
