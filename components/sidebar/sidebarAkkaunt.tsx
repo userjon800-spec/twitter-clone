@@ -9,7 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 interface Props {
 	user: IUser
 }
-
 const SidebarAkkaunt = ({ user }: Props) => {
   const { data, status } = useSession()
   if (status == "loading")

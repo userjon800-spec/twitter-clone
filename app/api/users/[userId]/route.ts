@@ -1,24 +1,33 @@
 import User from "@/database/userModel";
 import { connectToDatabase } from "@/lib/mongoose";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 export async function PUT(req: Request, route: { params: { userId: string } }) {
   try {
     await connectToDatabase();
     const body = await req.json();
     const { userId } = route.params;
-    let isExistingUsername = await User.findOne({ username: body.username });
-    if (body.profileImage || body.coverImage) {
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get("type");
+    if (type === "updateImage") {
       await User.findByIdAndUpdate(userId, body, { new: true });
+      revalidatePath(`/profile/${userId}`);
+      return NextResponse.json({ message: "User updated successfully" });
+    } else if (type === "updateFields") {
+      const existUser = await User.findById(userId);
+      if (body.username !== existUser.username) {
+        const usernameExist = await User.exists({ username: body.username });
+        if (usernameExist) {
+          return NextResponse.json(
+            { error: "Username already exists" },
+            { status: 400 }
+          );
+        }
+      }
+      await User.findByIdAndUpdate(userId, body, { new: true });
+      revalidatePath(`/profile/${userId}`);
       return NextResponse.json({ message: "User updated successfully" });
     }
-    if (isExistingUsername) {
-      return NextResponse.json(
-        { error: "Bu username allaqachon ro'yxatdan o'tgan" },
-        { status: 400 }
-      );
-    }
-    await User.findByIdAndUpdate(userId, body, { new: true });
-    return NextResponse.json({ message: "User updated successfully" });
   } catch (error) {
     const result = error as Error;
     return NextResponse.json({ error: result.message }, { status: 400 });

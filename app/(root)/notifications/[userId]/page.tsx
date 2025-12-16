@@ -1,3 +1,4 @@
+'use client'
 import Header from "@/components/shared/header";
 import Buttons from "@/components/ui/buttons";
 import useNotifications from "@/hooks/useNotifications";
