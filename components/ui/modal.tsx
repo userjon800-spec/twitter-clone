@@ -2,7 +2,6 @@ import { ReactElement } from "react";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -26,7 +25,7 @@ const Modal = ({
       <DialogContent
         className={cn(
           "bg-black p-1",
-          isEditing && "h-[80vh] overflow-x-hidden overflow-y-auto"
+          isEditing && "h-[80vh] overflow-x-hidden overflow-y-auto",
         )}
       >
         <div className="flex items-center gap-4">
@@ -45,5 +44,4 @@ const Modal = ({
     </Dialog>
   );
 };
-
 export default Modal;

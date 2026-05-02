@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 let UserSchema = new mongoose.Schema(
   {
     name: String,
@@ -17,7 +16,7 @@ let UserSchema = new mongoose.Schema(
       { type: mongoose.Schema.Types.ObjectId, ref: "Notification" },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 let User = mongoose.models.User || mongoose.model("User", UserSchema);
 export default User;

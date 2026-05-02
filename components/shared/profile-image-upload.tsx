@@ -1,11 +1,9 @@
 "use client";
-
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { IoMdDownload } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
-
 interface Props {
   profileImage: string;
   onChange: (profileImage: string) => void;
@@ -16,7 +14,7 @@ const ProfileImageUpload = ({ onChange, profileImage }: Props) => {
     (coverImage: string) => {
       onChange(coverImage);
     },
-    [onChange]
+    [onChange],
   );
   const handleDrop = useCallback(
     (files: any) => {
@@ -28,7 +26,7 @@ const ProfileImageUpload = ({ onChange, profileImage }: Props) => {
       };
       reader.readAsDataURL(file);
     },
-    [handleChange]
+    [handleChange],
   );
   const { getInputProps, getRootProps } = useDropzone({
     maxFiles: 1,
@@ -77,5 +75,4 @@ const ProfileImageUpload = ({ onChange, profileImage }: Props) => {
     </div>
   );
 };
-
 export default ProfileImageUpload;

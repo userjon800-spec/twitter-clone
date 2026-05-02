@@ -40,5 +40,4 @@ const FollowBar = () => {
     </div>
   );
 };
-
 export default FollowBar;

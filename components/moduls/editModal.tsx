@@ -1,6 +1,4 @@
 "use client";
-
-// import useEditModal from '@/hooks/useEditModal'
 import { IUser } from "@/types";
 import { useEffect, useState } from "react";
 import Modal from "../ui/modal";
@@ -11,15 +9,10 @@ import CoverImageUpload from "../shared/cover-image-upload";
 import ProfileImageUpload from "../shared/profile-image-upload";
 import axios from "axios";
 import EditForm from "../shared/editForm";
-// import EditForm from '../shared/edit-form'
-// import useAction from '@/hooks/use-action'
-// import { updateUser } from '@/actions/user.action'
-
 interface Props {
   user: IUser;
 }
 const EditModal = ({ user }: Props) => {
-  // const { isLoading, onError, setIsLoading } = useAction()
   const [coverImage, setCoverImage] = useState("");
   const [profileImage, setProfileImage] = useState("");
   const [isLoading, setisLoading] = useState(false);
@@ -69,5 +62,4 @@ const EditModal = ({ user }: Props) => {
     />
   );
 };
-
 export default EditModal;

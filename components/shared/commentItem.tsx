@@ -1,5 +1,4 @@
 "use client";
-
 import { IPost, IUser } from "@/types";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -19,10 +18,10 @@ interface Props {
 const CommentItem = ({ comment, user, setComments, comments }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  let goToProfile = (e:any)=>{
-    e.stopPropogation()
-    router.push(`/profile/${user._id}`)
-  }
+  let goToProfile = (e: any) => {
+    e.stopPropogation();
+    router.push(`/profile/${user._id}`);
+  };
   const onLike = async () => {
     try {
       setIsLoading(true);
@@ -48,7 +47,7 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
       }
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -70,7 +69,7 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
       setComments((prew) => prew.filter((p) => p._id !== comment._id));
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -135,5 +134,4 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
     </div>
   );
 };
-
 export default CommentItem;

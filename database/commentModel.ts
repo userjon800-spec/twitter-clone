@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 let CommentSchema = new mongoose.Schema(
   {
     body: String,
@@ -18,7 +17,7 @@ let CommentSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 let Comment =
   mongoose.models.Comment || mongoose.model("Comment", CommentSchema);

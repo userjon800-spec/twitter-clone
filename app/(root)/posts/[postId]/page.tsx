@@ -24,7 +24,7 @@ const Page = ({ params }: { params: { postId: string } }) => {
 
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -35,7 +35,7 @@ const Page = ({ params }: { params: { postId: string } }) => {
       setComments(data);
       setIsFetchingComment(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsFetchingComment(false);
     }
   };
@@ -79,7 +79,6 @@ const Page = ({ params }: { params: { postId: string } }) => {
               </div>
             </div>
           </div>
-
           <Form
             placeholder="Post your reply?"
             user={JSON.parse(JSON.stringify(session.currentUser))}
@@ -87,7 +86,6 @@ const Page = ({ params }: { params: { postId: string } }) => {
             setPosts={setComments}
             postId={params.postId}
           />
-
           {comments &&
             comments.map((comment) => (
               <CommentItem
@@ -98,12 +96,9 @@ const Page = ({ params }: { params: { postId: string } }) => {
                 comments={comments}
               />
             ))}
-
-          {/* <Pagination isNext={isNext} pageNumber={searchParams?.page ? +searchParams.page : 1} /> */}
         </>
       )}
     </>
   );
 };
-
 export default Page;

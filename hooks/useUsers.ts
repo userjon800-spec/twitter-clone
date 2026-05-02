@@ -3,7 +3,7 @@ import useSWR from "swr";
 let useUsers = (limit: number) => {
   let { data, error, isLoading, mutate } = useSWR(
     `api/users?limit=${limit}`,
-    fetcher
+    fetcher,
   );
   return {
     users: data,

@@ -1,4 +1,3 @@
-// import { IUser } from '@/types'
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { RiLogoutCircleLine } from "react-icons/ri";
@@ -19,7 +18,6 @@ const SidebarAkkaunt = ({ user }: Props) => {
     );
   return (
     <>
-      {/* MOBIE SIDEBAR ACCOUNT */}
       <div className="lg:hidden block">
         <div
           className="mt-6 lg:hidden rounded-full h-14 w-14 p-4 flex items-center justify-center bg-red-500 hover:bg-opacity-80 transition cursor-pointer"
@@ -28,7 +26,6 @@ const SidebarAkkaunt = ({ user }: Props) => {
           <RiLogoutCircleLine size={24} color="white" />
         </div>
       </div>
-      {/* DESKTOP SIDEBAR ACCOUNT */}
       <Popover>
         <PopoverTrigger className="w-full rounded-full hover:bg-slate-300 hidden lg:block cursor-pointer hover:bg-opacity-10 px-4 py-2 transition">
           <div className="flex justify-between items-center gap-2">
@@ -61,5 +58,4 @@ const SidebarAkkaunt = ({ user }: Props) => {
     </>
   );
 };
-
 export default SidebarAkkaunt;

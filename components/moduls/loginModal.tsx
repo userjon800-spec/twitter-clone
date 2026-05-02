@@ -7,7 +7,7 @@ import {
   FormItem,
   FormMessage,
 } from "../ui/form";
-import { Alert, AlertDescription, AlertTitle, } from "../ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { AlertCircle } from "lucide-react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -38,7 +38,7 @@ export default function LoginModal() {
     try {
       const { data } = await axios.post("/api/auth/login", values);
       if (data.success) {
-        signIn("credentials", values)
+        signIn("credentials", values);
         loginModal.onClose();
       }
     } catch (error: any) {
@@ -53,7 +53,7 @@ export default function LoginModal() {
   let bodyContent = (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-12">
-          {error && (
+        {error && (
           <Alert variant={"destructive"}>
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>

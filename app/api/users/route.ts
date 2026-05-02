@@ -2,7 +2,6 @@ import User from "@/database/userModel";
 import { connectToDatabase } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 import { serializeUser } from "./serializeUser";
-
 export async function GET(req: Request) {
   try {
     await connectToDatabase();

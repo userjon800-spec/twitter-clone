@@ -1,5 +1,4 @@
 "use client";
-
 import { IUser } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,7 +18,6 @@ import useEditModal from "@/hooks/useEditModal";
 import { userSchema } from "@/lib/validation";
 import { Textarea } from "../ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-
 interface Props {
   user: IUser;
 }
@@ -117,11 +115,9 @@ const EditForm = ({ user }: Props) => {
           secondary
           large
           fullWidhth
-          //   disabled={isSubmitting}
         />
       </form>
     </Form>
   );
 };
-
 export default EditForm;

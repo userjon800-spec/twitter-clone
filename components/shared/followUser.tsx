@@ -45,7 +45,7 @@ const FollowUser = ({ user, setFollowing }: Props) => {
       router.refresh();
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -70,7 +70,7 @@ const FollowUser = ({ user, setFollowing }: Props) => {
       router.refresh();
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };

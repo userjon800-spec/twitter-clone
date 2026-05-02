@@ -1,7 +1,6 @@
 import Comment from "@/database/commentModel";
 import { connectToDatabase } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
-
 export async function DELETE(
   req: Request,
   route: { params: { commentId: string } }

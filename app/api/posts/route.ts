@@ -8,7 +8,7 @@ import { serializePost } from "@/lib/serializePost";
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
-     let { currentUser }: any = await getServerSession(authOption);
+    let { currentUser }: any = await getServerSession(authOption);
     let { body, userId } = await req.json();
     let post = await Post.create({ body, user: userId });
     post = await post.populate({

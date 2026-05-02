@@ -17,7 +17,7 @@ import axios from "axios";
 import { Input } from "../ui/input";
 import Button from "../ui/buttons";
 import useLoginModal from "@/hooks/useLoginModal";
-import { Alert, AlertDescription, AlertTitle, } from "../ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { AlertCircle } from "lucide-react";
 import { signIn } from "next-auth/react";
 const RegisterModal = () => {
@@ -48,7 +48,6 @@ const RegisterModal = () => {
       </p>
     </div>
   );
-
   return (
     <Modal
       body={bodyContent}
@@ -60,9 +59,7 @@ const RegisterModal = () => {
     />
   );
 };
-
 export default RegisterModal;
-
 function RegisterStep1({
   setData,
   setStep,
@@ -91,9 +88,9 @@ function RegisterStep1({
       } else {
         setError("Nimadir noto'g'ri ketdi, iltimos keyinroq urinib ko'ring");
       }
-      console.log(
+      console.error(
         "Register step1 error:",
-        error?.response?.data ?? error?.message ?? error
+        error?.response?.data ?? error?.message ?? error,
       );
     }
   }
@@ -165,9 +162,9 @@ function RegisterStep2({ data }: { data: { name: string; email: string } }) {
       });
       if (response.success) {
         signIn("credentials", {
-          email: data.email,  
-          password: values.password, 
-        })
+          email: data.email,
+          password: values.password,
+        });
         register.onClose();
       }
     } catch (error: any) {
@@ -176,9 +173,9 @@ function RegisterStep2({ data }: { data: { name: string; email: string } }) {
       } else {
         setError("Nimadir noto'g'ri ketdi, iltimos keyinroq urinib ko'ring");
       }
-      console.log(
+      console.error(
         "Register step2 error:",
-        error?.response?.data ?? error?.message ?? error
+        error?.response?.data ?? error?.message ?? error,
       );
     }
   }

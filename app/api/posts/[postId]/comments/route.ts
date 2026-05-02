@@ -5,14 +5,11 @@ import { authOption } from "@/lib/authOptions";
 import { connectToDatabase } from "@/lib/mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-
 export async function GET(req: Request, route: { params: { postId: string } }) {
   try {
     await connectToDatabase();
     const { postId } = route.params;
-
     const { currentUser }: any = await getServerSession(authOption);
-
     const post = await Post.findById(postId).populate({
       path: "comments",
       model: Comment,
@@ -23,7 +20,6 @@ export async function GET(req: Request, route: { params: { postId: string } }) {
       },
       options: { sort: { likes: -1 } },
     });
-
     const filteredComments = post.comments.map((item: any) => ({
       body: item.body,
       createdAt: item.createdAt,
@@ -38,7 +34,6 @@ export async function GET(req: Request, route: { params: { postId: string } }) {
       hasLiked: item.likes.includes(currentUser._id),
       _id: item._id,
     }));
-
     return NextResponse.json(filteredComments);
   } catch (error) {
     const result = error as Error;

@@ -20,7 +20,7 @@ export async function PUT(req: Request, route: { params: { userId: string } }) {
         if (usernameExist) {
           return NextResponse.json(
             { error: "Username already exists" },
-            { status: 400 }
+            { status: 400 },
           );
         }
       }

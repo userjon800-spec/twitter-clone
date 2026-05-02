@@ -7,7 +7,6 @@ import { formatDistanceToNowStrict } from "date-fns";
 import Modal from "../ui/modal";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -15,7 +14,6 @@ import EditModal from "../moduls/editModal";
 import useEditModal from "@/hooks/useEditModal";
 import User from "../shared/user";
 const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
-  // const { isLoading, setIsLoading, onError } = useAction()
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [following, setFollowing] = useState<IUser[]>([]);
@@ -34,7 +32,7 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
       router.refresh();
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -50,23 +48,20 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
       router.refresh();
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };
-  console.log(following);
-
-  const onFollowUser = async (userId: string, type: string) => {};
   const getFollowUser = async (userId: string, type: string) => {
     try {
       setIsFetching(true);
       const { data } = await axios.get(
-        `/api/follows?state=${type}&userId=${userId}`
+        `/api/follows?state=${type}&userId=${userId}`,
       );
       setIsFetching(false);
       return data;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsFetching(false);
     }
   };
@@ -76,7 +71,7 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
       let data = await getFollowUser(user._id, "following");
       setFollowing(data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   const onFollowing = async () => {
@@ -182,7 +177,7 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                 className={cn(
                   "w-[50%] h-full flex justify-center items-center cursor-pointer font-semibold",
                   state === "following" &&
-                    "border-b-[2px] border-sky-500 text-sky-500"
+                    "border-b-[2px] border-sky-500 text-sky-500",
                 )}
                 onClick={onFollowing}
                 role="button"
@@ -193,7 +188,7 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                 className={cn(
                   "w-[50%] h-full flex justify-center items-center cursor-pointer font-semibold",
                   state === "followers" &&
-                    "border-b-[2px] border-sky-500 text-sky-500"
+                    "border-b-[2px] border-sky-500 text-sky-500",
                 )}
                 onClick={onFollowers}
                 role="button"
@@ -222,7 +217,6 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                         onChangeFollowing={onChangeFollowing}
                       />
                     ))
-                    // following.map(user => <FollowUser key={user._id} user={user} setFollowing={setFollowing} />)
                   )
                 ) : followers.length === 0 ? (
                   <div className="text-neutral-600 text-center p-6 text-xl">
@@ -238,7 +232,6 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                       onChangeFollowing={onChangeFollowing}
                     />
                   ))
-                  // followers.map(user => <FollowUser key={user._id} user={user} setFollowing={setFollowing} />)
                 )}
               </div>
             )}
@@ -249,5 +242,4 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
     </>
   );
 };
-
 export default ProfileBio;

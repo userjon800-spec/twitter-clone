@@ -11,7 +11,6 @@ interface Props {
 }
 const Layout = async ({ children }: Props) => {
   let session: any = await getServerSession(authOption);
-  
   if (!session) {
     return (
       <div className="container h-screen mx-auto max-w-7xl">
@@ -46,5 +45,4 @@ const Layout = async ({ children }: Props) => {
     </div>
   );
 };
-
 export default Layout;

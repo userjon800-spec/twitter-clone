@@ -1,5 +1,4 @@
 "use client";
-
 import { useRouter } from "next/navigation";
 import { BiArrowBack } from "react-icons/bi";
 interface Props {
@@ -27,5 +26,4 @@ const Header = ({ label, isBack }: Props) => {
     </div>
   );
 };
-
 export default Header;

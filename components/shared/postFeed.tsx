@@ -21,7 +21,7 @@ const PostFeed = ({ userId, user }: Props) => {
       setPosts(data);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(true);
     }
   };

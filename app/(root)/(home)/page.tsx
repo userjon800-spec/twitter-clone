@@ -2,16 +2,11 @@
 import Form from "@/components/shared/form";
 import Header from "@/components/shared/header";
 import PostItem from "@/components/shared/postItem";
-// import { authOption } from "@/lib/authOptions";
 import { IPost } from "@/types";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
-// import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-interface Props {
-  children: React.ReactNode;
-}
 const App = () => {
   let { data: session, status }: any = useSession();
   const [isLoading, setIsLoading] = useState(false);
@@ -24,13 +19,12 @@ const App = () => {
         setPosts(data);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         setIsLoading(false);
       }
     };
     getPosts();
   }, []);
-  
   return (
     <>
       <Header label="Home" />
@@ -58,5 +52,4 @@ const App = () => {
     </>
   );
 };
-
 export default App;

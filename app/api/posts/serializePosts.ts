@@ -1,8 +1,6 @@
 import { serializeUser } from "../users/serializeUser";
-
 export const serializePost = (post: any) => {
   if (!post) return null;
-
   return {
     _id: post._id?.toString(),
     body: post.body,

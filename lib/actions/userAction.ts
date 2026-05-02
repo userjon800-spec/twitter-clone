@@ -22,7 +22,7 @@ export async function getUserById(userId: string) {
       following: user.following?.length || 0,
       isFollowing: user.followers?.includes(currentUser._id) || false,
     };
-    return filteredUser
+    return filteredUser;
   } catch (error) {
     throw error;
   }

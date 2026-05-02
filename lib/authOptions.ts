@@ -14,11 +14,9 @@ export const authOption: AuthOptions = {
       },
       async authorize(credentials) {
         await connectToDatabase();
-
         const user = await User.findOne({
           email: credentials?.email,
         });
-
         return user;
       },
     }),
@@ -46,7 +44,6 @@ export const authOption: AuthOptions = {
       return session;
     },
   },
-  // debug: process.env.NODE_ENV === "development",
   session: { strategy: "jwt" },
   jwt: { secret: process.env.NEXTAUTH_JWT_SECRET },
   secret: process.env.NEXTAUTH_SECRET!,

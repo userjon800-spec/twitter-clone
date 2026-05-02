@@ -5,7 +5,6 @@ import PostFeed from "@/components/shared/postFeed";
 import { getUserById } from "@/lib/actions/userAction";
 import { authOption } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
-
 const Page = async ({ params }: { params: { userId: string } }) => {
   let user = await getUserById(params.userId);
   const session = await getServerSession(authOption);
@@ -17,13 +16,11 @@ const Page = async ({ params }: { params: { userId: string } }) => {
         user={JSON.parse(JSON.stringify(user))}
         userId={JSON.parse(JSON.stringify(session)).currentUser._id}
       />
-      <PostFeed user={JSON.parse(JSON.stringify(session?.currentUser))} userId={params.userId} />
+      <PostFeed
+        user={JSON.parse(JSON.stringify(session?.currentUser))}
+        userId={params.userId}
+      />
     </>
   );
 };
-
 export default Page;
-
-{
-  /* <Header label={user?.name!} isBack /> */
-}

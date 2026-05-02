@@ -1,14 +1,10 @@
-// import Notification from '@/database/notification.model'
 import Notification from "@/database/notificationModel";
 import User from "@/database/userModel";
-import { authOption } from "@/lib/authOptions";
 import { connectToDatabase } from "@/lib/mongoose";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 export async function PUT(req: Request) {
   try {
     await connectToDatabase();
-    let { currentUser }: any = await getServerSession(authOption);
     let { userId, currentUserId } = await req.json();
     await User.findByIdAndUpdate(userId, {
       $push: { followers: currentUserId },
@@ -22,7 +18,7 @@ export async function PUT(req: Request) {
     });
     await User.findOneAndUpdate(
       { _id: userId },
-      { $set: { hasNewNotifications: true } }
+      { $set: { hasNewNotifications: true } },
     );
     return NextResponse.json({ message: "Followed" });
   } catch (error) {
@@ -33,7 +29,6 @@ export async function PUT(req: Request) {
 export async function DELETE(req: Request) {
   try {
     await connectToDatabase();
-    let { currentUser }: any = await getServerSession(authOption);
     let { userId, currentUserId } = await req.json();
     await User.findByIdAndUpdate(userId, {
       $pull: { followers: currentUserId },

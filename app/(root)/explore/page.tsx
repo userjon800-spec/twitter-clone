@@ -9,7 +9,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { debounce } from "lodash";
-
 const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [allUsers, setAllUsers] = useState<IUser[]>([]);
@@ -23,7 +22,7 @@ const Page = () => {
       setAllUsers(data);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -93,5 +92,4 @@ const Page = () => {
     </>
   );
 };
-
 export default Page;

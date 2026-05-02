@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { ReactNode } from "react";
-
 interface ButtonProps {
   label: ReactNode | string;
   secondary?: boolean;
@@ -39,12 +38,11 @@ const Buttons = ({
         outline
           ? "bg-transparent border-slate-600 text-sky-500 hover:bg-slate-800/40"
           : "",
-        classNames
+        classNames,
       )}
     >
       {label} {isLoading && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
     </button>
   );
 };
-
 export default Buttons;

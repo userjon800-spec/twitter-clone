@@ -6,7 +6,6 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { serializePost } from "@/lib/serializePost";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-
 export async function PUT(req: Request) {
   try {
     await connectToDatabase();
@@ -18,7 +17,7 @@ export async function PUT(req: Request) {
     });
     await User.findOneAndUpdate(
       { _id: String(post.user) },
-      { $set: { hasNewNotifications: true } }
+      { $set: { hasNewNotifications: true } },
     );
     if (!post)
       return NextResponse.json({ error: "Post topilmadi" }, { status: 404 });
@@ -38,18 +37,11 @@ export async function DELETE(req: Request) {
   try {
     await connectToDatabase();
     let { postId, userId } = await req.json();
-    // let post = await Post.findByIdAndUpdate(
-    //   postId,
-    //   {
-    //     $pull: { likes: userId },
-    //   },
-    //   { new: true }
-    // );
     const post = await Post.findById(postId);
     if (!post)
       return NextResponse.json({ error: "Post topilmadi" }, { status: 404 });
     post.likes = post.likes.filter(
-      (id: any) => id.toString() !== userId.toString()
+      (id: any) => id.toString() !== userId.toString(),
     );
     await post.save();
     await post.populate("user");

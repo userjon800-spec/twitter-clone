@@ -42,14 +42,6 @@ const Form = ({ placeholder, user, isComment, setPosts, postId }: Props) => {
           description: "Post muaffaqiyatli yaratildi",
         });
       }
-      // let newPost = {
-      //   ...data,
-      //   user: data.user ?? user,
-      //   likes: 0,
-      //   hasLiked: false,
-      //   comments: 0,
-      // };
-      // setPosts((prew) => [newPost, ...prew]);
       setIsLoading(false);
       setBody("");
     } catch (error) {
@@ -78,14 +70,12 @@ const Form = ({ placeholder, user, isComment, setPosts, postId }: Props) => {
             onKeyDown={(e) => e.key === "Enter" && onSubmit()}
           ></textarea>
           <hr className="opacity-0 peer-focus:opacity-100 h-[1px] w-full border-neutral-800 transition" />
-
           <div className="mt-4 flex flex-row justify-end">
             <Buttons
               label={isComment ? "Reply" : "Post"}
               classNames="px-8"
               disabled={isLoading || !body}
               onClick={() => onSubmit()}
-              // isLoading={isLoading}
               type="submit"
             />
           </div>
@@ -94,5 +84,4 @@ const Form = ({ placeholder, user, isComment, setPosts, postId }: Props) => {
     </div>
   );
 };
-
 export default Form;

@@ -6,7 +6,6 @@ import { authOption } from "@/lib/authOptions";
 import { connectToDatabase } from "@/lib/mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
@@ -21,7 +20,7 @@ export async function POST(req: Request) {
     });
     await User.findOneAndUpdate(
       { _id: String(post.user) },
-      { $set: { hasNewNotifications: true } }
+      { $set: { hasNewNotifications: true } },
     );
     return NextResponse.json(comment);
   } catch (error) {
@@ -29,13 +28,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: result.message }, { status: 400 });
   }
 }
-
 export async function PUT(req: Request) {
   try {
     await connectToDatabase();
     let { commentId } = await req.json();
     let { currentUser }: any = await getServerSession(authOption);
- let comment =   await Comment.findByIdAndUpdate(commentId, {
+    let comment = await Comment.findByIdAndUpdate(commentId, {
       $push: { likes: currentUser._id },
     });
     await Notification.create({
@@ -44,7 +42,7 @@ export async function PUT(req: Request) {
     });
     await User.findOneAndUpdate(
       { _id: String(comment.user) },
-      { $set: { hasNewNotifications: true } }
+      { $set: { hasNewNotifications: true } },
     );
     return NextResponse.json({ message: "Comment liked" });
   } catch (error) {
@@ -52,7 +50,6 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: result.message }, { status: 400 });
   }
 }
-
 export async function DELETE(req: Request) {
   try {
     await connectToDatabase();

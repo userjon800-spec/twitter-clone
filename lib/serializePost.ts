@@ -18,7 +18,7 @@ export function serializePost(post: any, currentUserId?: string) {
     hasLiked:
       currentUserId && Array.isArray(post.likes)
         ? post.likes.some(
-            (id: any) => id.toString() === currentUserId.toString()
+            (id: any) => id.toString() === currentUserId.toString(),
           )
         : false,
   };

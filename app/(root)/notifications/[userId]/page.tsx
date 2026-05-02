@@ -7,7 +7,6 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-
 const Page = ({ params }: { params: { userId: string } }) => {
   let { data, isLoading, mutate } = useNotifications(params.userId);
   const [isClearing, setIsClearing] = useState(false);
@@ -18,7 +17,7 @@ const Page = ({ params }: { params: { userId: string } }) => {
       mutate();
       setIsClearing(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsClearing(false);
     }
   };
@@ -68,6 +67,4 @@ const Page = ({ params }: { params: { userId: string } }) => {
     </>
   );
 };
-
 export default Page;
-

@@ -19,7 +19,6 @@ const ProfileHero = ({ user }: { user: IUser }) => {
           style={{ objectFit: "cover" }}
         />
       )}
-
       <div className="absolute -bottom-16 left-4">
         <Avatar className="w-32 h-32">
           <AvatarImage src={user.profileImage} />
@@ -29,5 +28,4 @@ const ProfileHero = ({ user }: { user: IUser }) => {
     </div>
   );
 };
-
 export default ProfileHero;

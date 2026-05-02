@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       if (isExistingUser) {
         return NextResponse.json(
           { error: "Bu allaqachon email ro'yxatdan o'tgan" },
-          { status: 400 }
+          { status: 400 },
         );
       }
       return NextResponse.json({ success: true });
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       if (isExistingUsername) {
         return NextResponse.json(
           { error: "Bu username ro'yxatdan o'tgan" },
-          { status: 400 }
+          { status: 400 },
         );
       }
       const hashedPassword = await hash(password, 10);

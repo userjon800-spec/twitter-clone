@@ -5,7 +5,6 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { serializePost } from "@/lib/serializePost";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-
 export async function GET(req: Request, route: { params: { userId: string } }) {
   try {
     await connectToDatabase();

@@ -1,16 +1,13 @@
 "use client";
-
 import { useDropzone } from "react-dropzone";
 import { useCallback, useState } from "react";
 import Image from "next/image";
 import { MdEdit } from "react-icons/md";
 import { IoIosCloudDownload } from "react-icons/io";
-
 interface Props {
   coverImage: string;
   onChange: (coverImage: string) => void;
 }
-
 const CoverImageUpload = ({ coverImage, onChange }: Props) => {
   const [image, setImage] = useState(coverImage);
   let handleChange = useCallback(
@@ -68,5 +65,4 @@ const CoverImageUpload = ({ coverImage, onChange }: Props) => {
     </div>
   );
 };
-
 export default CoverImageUpload;

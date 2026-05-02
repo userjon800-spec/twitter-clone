@@ -2,7 +2,6 @@ import Notification from "@/database/notificationModel";
 import User from "@/database/userModel";
 import { connectToDatabase } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
-
 export async function GET(req: Request, route: { params: { userId: string } }) {
   try {
     await connectToDatabase();
@@ -35,7 +34,7 @@ export async function POST(req: Request) {
 }
 export async function DELETE(
   req: Request,
-  route: { params: { userId: string } }
+  route: { params: { userId: string } },
 ) {
   try {
     await connectToDatabase();
@@ -44,9 +43,9 @@ export async function DELETE(
     await User.findByIdAndUpdate(
       userId,
       { $set: { hasNewNotifications: false } },
-      { new: true }
+      { new: true },
     );
-    return NextResponse.json({message: "Notifications o'chirildi"});
+    return NextResponse.json({ message: "Notifications o'chirildi" });
   } catch (error) {
     const result = error as Error;
     return NextResponse.json({ error: result.message }, { status: 400 });

@@ -9,10 +9,8 @@ import { useCallback } from "react";
 import RegisterModal from "../moduls/registerModal";
 import useLoginModal from "@/hooks/useLoginModal";
 import LoginModal from "../moduls/loginModal";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 const Auth = () => {
-  let { data } = useSession();
-  console.log(data);
   let registerModal = useRegisterModal();
   let loginModal = useLoginModal();
   let onOpenRegisterModal = useCallback(() => {
@@ -105,5 +103,4 @@ const Auth = () => {
     </>
   );
 };
-
 export default Auth;

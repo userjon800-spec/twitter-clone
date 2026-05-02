@@ -61,7 +61,6 @@ const PostItem = ({ post, user, setPosts }: Props) => {
           prew.map((p) => (p._id === post._id ? updatePosts : p))
         );
       }
-
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -137,5 +136,4 @@ const PostItem = ({ post, user, setPosts }: Props) => {
     </div>
   );
 };
-
 export default PostItem;
