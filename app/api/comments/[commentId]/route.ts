@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function DELETE(
   req: Request,
-  route: { params: Promise<{ commentId: string }> | { commentId: string } },
+  { params }: { params: Promise<{ commentId: string }> },
 ) {
   try {
     await connectToDatabase();
@@ -19,8 +19,7 @@ export async function DELETE(
         { status: 401 },
       );
     }
-    const params = await Promise.resolve(route.params);
-    const { commentId } = params;
+    const { commentId } = await params;
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return NextResponse.json({ error: "Sharh topilmadi" }, { status: 404 });

@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  route: { params: Promise<{ userId: string }> | { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     await connectToDatabase();
@@ -19,8 +19,7 @@ export async function GET(
         { status: 401 },
       );
     }
-    const params = await Promise.resolve(route.params);
-    const { userId } = params;
+    const { userId } = await params;
     if (currentUser._id.toString() !== userId.toString()) {
       return NextResponse.json(
         {
@@ -68,7 +67,7 @@ export async function POST(req: Request) {
 
 export async function DELETE(
   req: Request,
-  route: { params: Promise<{ userId: string }> | { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     await connectToDatabase();
@@ -80,8 +79,7 @@ export async function DELETE(
         { status: 401 },
       );
     }
-    const params = await Promise.resolve(route.params);
-    const { userId } = params;
+    const { userId } = await params;
     if (currentUser._id.toString() !== userId.toString()) {
       return NextResponse.json(
         {

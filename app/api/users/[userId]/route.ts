@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function PUT(
   req: Request,
-  route: { params: Promise<{ userId: string }> | { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     await connectToDatabase();
@@ -19,8 +19,7 @@ export async function PUT(
         { status: 401 },
       );
     }
-    const params = await Promise.resolve(route.params);
-    const { userId } = params;
+    const { userId } = await params;
     if (currentUser._id.toString() !== userId.toString()) {
       return NextResponse.json(
         { error: "Boshqa foydalanuvchi profilini tahrirlash taqiqlanadi" },

@@ -8,10 +8,9 @@ import { getServerSession } from "next-auth";
 const Page = async ({
   params,
 }: {
-  params: Promise<{ userId: string }> | { userId: string };
+  params: Promise<{ userId: string }>;
 }) => {
-  const resolvedParams = await Promise.resolve(params);
-  const { userId } = resolvedParams;
+  const { userId } = await params;
   let user = await getUserById(userId);
   const session: any = await getServerSession(authOption);
   const currentUserId = session?.currentUser?._id?.toString() || "";

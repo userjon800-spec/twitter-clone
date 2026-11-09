@@ -7,12 +7,11 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 export async function GET(
   req: Request,
-  route: { params: Promise<{ postId: string }> | { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     await connectToDatabase();
-    const params = await Promise.resolve(route.params);
-    const { postId } = params;
+    const { postId } = await params;
     const session: any = await getServerSession(authOption);
     const currentUser = session?.currentUser;
     const post = await Post.findById(postId).populate({

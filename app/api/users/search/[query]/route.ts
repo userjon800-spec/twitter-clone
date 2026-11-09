@@ -3,12 +3,11 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 export async function GET(
   req: Request,
-  route: { params: Promise<{ query: string }> | { query: string } },
+  { params }: { params: Promise<{ query: string }> },
 ) {
   try {
     await connectToDatabase();
-    const params = await Promise.resolve(route.params);
-    const { query } = params;
+    const { query } = await params;
     if (!query || !query.trim()) {
       return NextResponse.json([]);
     }

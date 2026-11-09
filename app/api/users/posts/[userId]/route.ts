@@ -5,13 +5,17 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { serializePost } from "@/lib/serializePost";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-export async function GET(req: Request, route: { params: { userId: string } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ userId: string }> }
+) {
   try {
     await connectToDatabase();
+    const { userId } = await params;
     let { currentUser }: any = await getServerSession(authOption);
     let { searchParams } = new URL(req.url);
     let limit = searchParams.get("limit");
-    let posts = await Post.find({ user: route.params.userId })
+    let posts = await Post.find({ user: userId })
       .populate({
         path: "user",
         model: User,
