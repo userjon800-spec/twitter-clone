@@ -4,25 +4,27 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 const ProfileHero = ({ user }: { user: IUser }) => {
   return (
     <div className="h-44 relative bg-neutral-800">
-      {user.coverImage ? (
+      {user?.coverImage ? (
         <Image
           fill
           src={user.coverImage}
-          alt={user.name}
+          alt={user?.name || "Cover Image"}
           style={{ objectFit: "cover" }}
         />
       ) : (
         <Image
           fill
           src={"/images/image.jpg"}
-          alt={user.name}
+          alt={user?.name || "Default Cover"}
           style={{ objectFit: "cover" }}
         />
       )}
       <div className="absolute -bottom-16 left-4">
         <Avatar className="w-32 h-32">
-          <AvatarImage src={user.profileImage} />
-          <AvatarFallback className="text-7xl">{user.name[0]}</AvatarFallback>
+          <AvatarImage src={user?.profileImage} />
+          <AvatarFallback className="text-7xl">
+            {user?.name?.[0] || "U"}
+          </AvatarFallback>
         </Avatar>
       </div>
     </div>

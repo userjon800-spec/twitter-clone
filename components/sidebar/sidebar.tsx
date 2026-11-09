@@ -1,5 +1,5 @@
 "use client";
-import { Bell, Home, Search, User } from "lucide-react";
+import { Bell, Bookmark, Home, Search, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import SidebarItems from "./sidebarItems";
@@ -14,6 +14,11 @@ const Sidebar = ({ user }: { user: IUser }) => {
       path: `/notifications/${user?._id}`,
       icon: Bell,
       notification: user?.hasNewNotifications,
+    },
+    {
+      label: "Bookmarks",
+      path: `/bookmarks`,
+      icon: Bookmark,
     },
     {
       label: "Profile",

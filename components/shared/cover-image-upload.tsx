@@ -14,7 +14,7 @@ const CoverImageUpload = ({ coverImage, onChange }: Props) => {
     (coverImage: string) => {
       onChange(coverImage);
     },
-    [onChange]
+    [onChange],
   );
   let handleDropzone = useCallback(
     (files: any) => {
@@ -26,10 +26,11 @@ const CoverImageUpload = ({ coverImage, onChange }: Props) => {
       };
       reader.readAsDataURL(file);
     },
-    [handleChange]
+    [handleChange],
   );
   let { getInputProps, getRootProps } = useDropzone({
     maxFiles: 1,
+    maxSize: 4 * 1024 * 1024,
     onDrop: handleDropzone,
     accept: {
       "image/jpeg": [],

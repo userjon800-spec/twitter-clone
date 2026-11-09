@@ -4,6 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDatabase } from "./mongoose";
 import User from "@/database/userModel";
+import { compare } from "bcrypt";
+
 export const authOption: AuthOptions = {
   providers: [
     CredentialsProvider({
@@ -13,10 +15,25 @@ export const authOption: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email va parol kiritilishi shart");
+        }
         await connectToDatabase();
         const user = await User.findOne({
-          email: credentials?.email,
+          email: credentials.email.toLowerCase().trim(),
         });
+        if (!user || !user.password) {
+          throw new Error(
+            "Bunday foydalanuvchi topilmadi yoki parol o'rnatilmagan",
+          );
+        }
+        const isPasswordValid = await compare(
+          credentials.password,
+          user.password,
+        );
+        if (!isPasswordValid) {
+          throw new Error("Parol noto'g'ri");
+        }
         return user;
       },
     }),
@@ -31,13 +48,21 @@ export const authOption: AuthOptions = {
   ],
   callbacks: {
     async session({ session }) {
+      if (!session.user?.email) return session;
       await connectToDatabase();
-      let user = await User.findOne({ email: session.user?.email });
+      let user = await User.findOne({
+        email: session.user.email.toLowerCase().trim(),
+      });
       if (!user) {
+        const defaultUsername =
+          session.user.email.split("@")[0] +
+          "_" +
+          Math.floor(Math.random() * 1000);
         user = await User.create({
-          email: session.user?.email,
-          name: session.user?.name,
-          profileImage: session.user?.image,
+          email: session.user.email.toLowerCase().trim(),
+          name: session.user.name || "User",
+          username: defaultUsername,
+          profileImage: session.user.image,
         });
       }
       session.currentUser = user;

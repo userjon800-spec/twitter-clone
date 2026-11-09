@@ -9,19 +9,43 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
-    let { body, postId, userId } = await req.json();
-    let comment = await Comment.create({ body, post: postId, user: userId });
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Avtorizatsiyadan o'tilmagan" },
+        { status: 401 },
+      );
+    }
+    let { body, postId } = await req.json();
+    if (!body || !body.trim()) {
+      return NextResponse.json(
+        { error: "Izoh bo'sh bo'lishi mumkin emas" },
+        { status: 400 },
+      );
+    }
+    let comment = await Comment.create({
+      body: body.trim(),
+      post: postId,
+      user: currentUser._id,
+    });
     let post = await Post.findByIdAndUpdate(postId, {
       $push: { comments: comment._id },
     });
-    await Notification.create({
-      user: String(post.user),
-      body: "Someone replied your post",
-    });
-    await User.findOneAndUpdate(
-      { _id: String(post.user) },
-      { $set: { hasNewNotifications: true } },
-    );
+    if (
+      post &&
+      post.user &&
+      post.user.toString() !== currentUser._id.toString()
+    ) {
+      await Notification.create({
+        user: String(post.user),
+        body: "Kimdir sizning postingizga sharh qoldirdi",
+      });
+      await User.findOneAndUpdate(
+        { _id: String(post.user) },
+        { $set: { hasNewNotifications: true } },
+      );
+    }
     return NextResponse.json(comment);
   } catch (error) {
     let result = error as Error;
@@ -32,18 +56,39 @@ export async function PUT(req: Request) {
   try {
     await connectToDatabase();
     let { commentId } = await req.json();
-    let { currentUser }: any = await getServerSession(authOption);
-    let comment = await Comment.findByIdAndUpdate(commentId, {
-      $push: { likes: currentUser._id },
-    });
-    await Notification.create({
-      user: String(comment.user),
-      body: "Someone liked on your replied post",
-    });
-    await User.findOneAndUpdate(
-      { _id: String(comment.user) },
-      { $set: { hasNewNotifications: true } },
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Avtorizatsiyadan o'tilmagan" },
+        { status: 401 },
+      );
+    }
+    let comment = await Comment.findById(commentId);
+    if (!comment) {
+      return NextResponse.json({ error: "Sharh topilmadi" }, { status: 404 });
+    }
+    const alreadyLiked = comment.likes?.some(
+      (id: any) => id.toString() === currentUser._id.toString(),
     );
+    if (!alreadyLiked) {
+      await Comment.findByIdAndUpdate(commentId, {
+        $addToSet: { likes: currentUser._id },
+      });
+      if (
+        comment.user &&
+        comment.user.toString() !== currentUser._id.toString()
+      ) {
+        await Notification.create({
+          user: String(comment.user),
+          body: "Kimdir sizning sharhingizni yoqtirdi",
+        });
+        await User.findOneAndUpdate(
+          { _id: String(comment.user) },
+          { $set: { hasNewNotifications: true } },
+        );
+      }
+    }
     return NextResponse.json({ message: "Comment liked" });
   } catch (error) {
     const result = error as Error;
@@ -54,11 +99,18 @@ export async function DELETE(req: Request) {
   try {
     await connectToDatabase();
     let { commentId } = await req.json();
-    let { currentUser }: any = await getServerSession(authOption);
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Avtorizatsiyadan o'tilmagan" },
+        { status: 401 },
+      );
+    }
     await Comment.findByIdAndUpdate(commentId, {
       $pull: { likes: currentUser._id },
     });
-    return NextResponse.json({ message: "Comment liked" });
+    return NextResponse.json({ message: "Comment unliked" });
   } catch (error) {
     const result = error as Error;
     return NextResponse.json({ error: result.message }, { status: 400 });

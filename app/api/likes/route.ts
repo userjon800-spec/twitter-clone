@@ -9,25 +9,38 @@ import { NextResponse } from "next/server";
 export async function PUT(req: Request) {
   try {
     await connectToDatabase();
-    let { postId, userId } = await req.json();
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Avtorizatsiyadan o'tilmagan" },
+        { status: 401 },
+      );
+    }
+    let { postId } = await req.json();
     let post = await Post.findById(postId);
-    await Notification.create({
-      user: String(post.user),
-      body: "Kimdir sizning postingizni yoqtirdi",
-    });
-    await User.findOneAndUpdate(
-      { _id: String(post.user) },
-      { $set: { hasNewNotifications: true } },
-    );
-    if (!post)
+    if (!post) {
       return NextResponse.json({ error: "Post topilmadi" }, { status: 404 });
-    if (!post.likes.includes(userId)) {
-      post.likes.push(userId);
+    }
+    const alreadyLiked = post.likes.some(
+      (id: any) => id.toString() === currentUser._id.toString(),
+    );
+    if (!alreadyLiked) {
+      post.likes.push(currentUser._id);
       await post.save();
+      if (post.user && post.user.toString() !== currentUser._id.toString()) {
+        await Notification.create({
+          user: String(post.user),
+          body: "Kimdir sizning postingizni yoqtirdi",
+        });
+        await User.findOneAndUpdate(
+          { _id: String(post.user) },
+          { $set: { hasNewNotifications: true } },
+        );
+      }
     }
     await post.populate("user");
-    const { currentUser }: any = await getServerSession(authOption);
-    return NextResponse.json(serializePost(post, currentUser?._id));
+    return NextResponse.json(serializePost(post, currentUser._id));
   } catch (error) {
     let result = error as Error;
     return NextResponse.json({ error: result.message }, { status: 400 });
@@ -36,17 +49,25 @@ export async function PUT(req: Request) {
 export async function DELETE(req: Request) {
   try {
     await connectToDatabase();
-    let { postId, userId } = await req.json();
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Avtorizatsiyadan o'tilmagan" },
+        { status: 401 },
+      );
+    }
+    let { postId } = await req.json();
     const post = await Post.findById(postId);
-    if (!post)
+    if (!post) {
       return NextResponse.json({ error: "Post topilmadi" }, { status: 404 });
+    }
     post.likes = post.likes.filter(
-      (id: any) => id.toString() !== userId.toString(),
+      (id: any) => id.toString() !== currentUser._id.toString(),
     );
     await post.save();
     await post.populate("user");
-    const { currentUser }: any = await getServerSession(authOption);
-    return NextResponse.json(serializePost(post, currentUser?._id));
+    return NextResponse.json(serializePost(post, currentUser._id));
   } catch (error) {
     let result = error as Error;
     return NextResponse.json({ error: result.message }, { status: 400 });

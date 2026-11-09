@@ -1,9 +1,9 @@
 "use client";
 
 import { IPost, IUser } from "@/types";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import PostItem from "./postItem";
+import PostSkeleton from "./postSkeleton";
 import axios from "axios";
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const PostFeed = ({ userId, user }: Props) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState<IPost[]>([]);
   const getPosts = async () => {
     try {
@@ -22,16 +22,20 @@ const PostFeed = ({ userId, user }: Props) => {
       setIsLoading(false);
     } catch (error) {
       console.error(error);
-      setIsLoading(true);
+      setIsLoading(false);
     }
   };
   useEffect(() => {
-    getPosts();
+    if (userId) {
+      getPosts();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
   return isLoading ? (
-    <div className="flex justify-center items-center h-24">
-      <Loader2 className="animate-spin text-sky-500" />
+    <PostSkeleton count={3} />
+  ) : posts.length === 0 ? (
+    <div className="text-neutral-500 text-center p-8 text-base">
+      Hozircha hech qanday post yo&apos;q
     </div>
   ) : (
     posts.map((post) => (

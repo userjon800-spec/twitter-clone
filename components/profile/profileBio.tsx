@@ -65,11 +65,18 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
       setIsFetching(false);
     }
   };
-  const openFollowModal = async () => {
+  const openFollowModal = async (
+    initialState: "following" | "followers" = "following",
+  ) => {
     try {
+      setState(initialState);
       setOpen(true);
-      let data = await getFollowUser(user._id, "following");
-      setFollowing(data);
+      let data = await getFollowUser(user._id, initialState);
+      if (initialState === "following") {
+        setFollowing(data || []);
+      } else {
+        setFollowers(data || []);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -144,21 +151,20 @@ const ProfileBio = ({ user, userId }: { user: IUser; userId: string }) => {
                     ? formatDistanceToNowStrict(new Date(user.createdAt)) +
                       " ago"
                     : "—"}
-                  ago
                 </p>
               </div>
             </div>
             <div className="flex flex-row items-center mt-6 gap-6">
               <div
                 className="flex flex-row items-center gap-1 hover:underline cursor-pointer"
-                onClick={openFollowModal}
+                onClick={() => openFollowModal("following")}
               >
                 <p className="text-white">{user.following}</p>
                 <p className="text-neutral-500">Following</p>
               </div>
               <div
                 className="flex flex-row items-center gap-1 hover:underline cursor-pointer"
-                onClick={openFollowModal}
+                onClick={() => openFollowModal("followers")}
               >
                 <p className="text-white">{user.followers}</p>
                 <p className="text-neutral-500">Followers</p>

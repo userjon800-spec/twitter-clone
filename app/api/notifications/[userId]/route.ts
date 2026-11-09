@@ -1,11 +1,35 @@
 import Notification from "@/database/notificationModel";
 import User from "@/database/userModel";
 import { connectToDatabase } from "@/lib/mongoose";
+import { getServerSession } from "next-auth";
+import { authOption } from "@/lib/authOptions";
 import { NextResponse } from "next/server";
-export async function GET(req: Request, route: { params: { userId: string } }) {
+
+export async function GET(
+  req: Request,
+  route: { params: Promise<{ userId: string }> | { userId: string } },
+) {
   try {
     await connectToDatabase();
-    const { userId } = route.params;
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Avtorizatsiyadan o'tilmagan" },
+        { status: 401 },
+      );
+    }
+    const params = await Promise.resolve(route.params);
+    const { userId } = params;
+    if (currentUser._id.toString() !== userId.toString()) {
+      return NextResponse.json(
+        {
+          error:
+            "Boshqa foydalanuvchining bildirishnomalarini ko'rish taqiqlanadi",
+        },
+        { status: 403 },
+      );
+    }
     let notifications = await Notification.find({ user: userId }).sort({
       createdAt: -1,
     });
@@ -18,9 +42,18 @@ export async function GET(req: Request, route: { params: { userId: string } }) {
     return NextResponse.json({ error: result.message }, { status: 400 });
   }
 }
+
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Avtorizatsiyadan o'tilmagan" },
+        { status: 401 },
+      );
+    }
     const body = await req.json();
     const notification = await Notification.create({
       body: body.body,
@@ -32,13 +65,32 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: result.message }, { status: 400 });
   }
 }
+
 export async function DELETE(
   req: Request,
-  route: { params: { userId: string } },
+  route: { params: Promise<{ userId: string }> | { userId: string } },
 ) {
   try {
     await connectToDatabase();
-    const { userId } = route.params;
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Avtorizatsiyadan o'tilmagan" },
+        { status: 401 },
+      );
+    }
+    const params = await Promise.resolve(route.params);
+    const { userId } = params;
+    if (currentUser._id.toString() !== userId.toString()) {
+      return NextResponse.json(
+        {
+          error:
+            "Boshqa foydalanuvchining bildirishnomalarini o'chirish taqiqlanadi",
+        },
+        { status: 403 },
+      );
+    }
     await Notification.deleteMany({ user: userId });
     await User.findByIdAndUpdate(
       userId,

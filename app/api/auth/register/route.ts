@@ -9,7 +9,8 @@ export async function POST(req: Request) {
     let step = searchParams.get("step");
     if (step === "1") {
       let { email } = await req.json();
-      let isExistingUser = await User.findOne({ email });
+      const normalizedEmail = email?.toLowerCase().trim();
+      let isExistingUser = await User.findOne({ email: normalizedEmail });
       if (isExistingUser) {
         return NextResponse.json(
           { error: "Bu allaqachon email ro'yxatdan o'tgan" },
@@ -19,7 +20,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true });
     } else if (step === "2") {
       let { email, username, name, password } = await req.json();
-      let isExistingUsername = await User.findOne({ username });
+      const normalizedEmail = email?.toLowerCase().trim();
+      let isExistingUsername = await User.findOne({
+        username: username?.trim(),
+      });
       if (isExistingUsername) {
         return NextResponse.json(
           { error: "Bu username ro'yxatdan o'tgan" },
@@ -28,9 +32,9 @@ export async function POST(req: Request) {
       }
       const hashedPassword = await hash(password, 10);
       let user = await User.create({
-        email,
-        username,
-        name,
+        email: normalizedEmail,
+        username: username?.trim(),
+        name: name?.trim(),
         password: hashedPassword,
       });
       return NextResponse.json({ success: true, user });

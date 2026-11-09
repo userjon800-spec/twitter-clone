@@ -20,6 +20,7 @@ const Page = () => {
     try {
       let { data } = await axios.get("/api/users?limit=20");
       setAllUsers(data);
+      setUsers(data);
       setIsLoading(false);
     } catch (error) {
       console.error(error);

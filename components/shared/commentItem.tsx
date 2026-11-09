@@ -9,6 +9,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import FormattedText from "./formattedText";
 interface Props {
   comment: IPost;
   user: IUser;
@@ -19,8 +20,10 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   let goToProfile = (e: any) => {
-    e.stopPropogation();
-    router.push(`/profile/${user._id}`);
+    e.stopPropagation();
+    if (comment?.user?._id) {
+      router.push(`/profile/${comment.user._id}`);
+    }
   };
   const onLike = async () => {
     try {
@@ -36,7 +39,7 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
             return {
               ...i,
               hasLiked: false,
-              likes: i.likes - 1,
+              likes: Math.max((i.likes || 0) - 1, 0),
             };
           }
           return i;
@@ -44,6 +47,17 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
         setComments(updatedComments);
       } else {
         await axios.put("/api/comments", { commentId: comment._id });
+        let updatedComments = comments.map((i) => {
+          if (i._id === comment._id) {
+            return {
+              ...i,
+              hasLiked: true,
+              likes: (i.likes || 0) + 1,
+            };
+          }
+          return i;
+        });
+        setComments(updatedComments);
       }
       setIsLoading(false);
     } catch (error) {
@@ -55,18 +69,7 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
     try {
       setIsLoading(true);
       await axios.delete(`/api/comments/${comment._id}`);
-      let updatedComments = comments.map((i) => {
-        if (i._id === comment._id) {
-          return {
-            ...i,
-            hasLiked: false,
-            likes: i.likes - 1,
-          };
-        }
-        return i;
-      });
-      setComments(updatedComments);
-      setComments((prew) => prew.filter((p) => p._id !== comment._id));
+      setComments((prev) => prev.filter((p) => p._id !== comment._id));
       setIsLoading(false);
     } catch (error) {
       console.error(error);
@@ -107,7 +110,9 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
                 formatDistanceToNowStrict(new Date(comment.createdAt))}
             </span>
           </div>
-          <div className="text-white mt-1">{comment?.body}</div>
+          <div className="text-white mt-1 break-words">
+            <FormattedText text={comment?.body || ""} />
+          </div>
 
           <div className="flex flex-row items-center mt-3 gap-10">
             <div
@@ -119,7 +124,7 @@ const CommentItem = ({ comment, user, setComments, comments }: Props) => {
               <p>{comment.likes || 0}</p>
             </div>
 
-            {comment.user._id === user._id && (
+            {user?._id && comment?.user?._id === user._id && (
               <div
                 className={`flex flex-row items-center text-neutral-500 gap-2 cursor-pointer transition hover:text-red-500`}
                 onClick={onDelete}

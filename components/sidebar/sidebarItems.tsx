@@ -20,7 +20,7 @@ const SidebarItems = ({ icon: Icon, label, notification, path }: Props) => {
       <div
         className={cn(
           "relative hidden lg:flex gap-4 p-4 rounded-full hover:bg-slate-300 hover:bg-opacity-10 cursor-pointer items-center",
-          pathname === path && "bg-opacity-10 bg-slate-300"
+          pathname === path && "bg-opacity-10 bg-slate-300",
         )}
       >
         <Icon size={24} color="white" />

@@ -31,7 +31,7 @@ const EditModal = ({ user }: Props) => {
       router.refresh();
       setisLoading(false);
     } catch (error) {
-      setisLoading(true);
+      setisLoading(false);
     }
   };
   let bodyContent = (

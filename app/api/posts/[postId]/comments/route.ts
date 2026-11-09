@@ -5,11 +5,16 @@ import { authOption } from "@/lib/authOptions";
 import { connectToDatabase } from "@/lib/mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-export async function GET(req: Request, route: { params: { postId: string } }) {
+export async function GET(
+  req: Request,
+  route: { params: Promise<{ postId: string }> | { postId: string } },
+) {
   try {
     await connectToDatabase();
-    const { postId } = route.params;
-    const { currentUser }: any = await getServerSession(authOption);
+    const params = await Promise.resolve(route.params);
+    const { postId } = params;
+    const session: any = await getServerSession(authOption);
+    const currentUser = session?.currentUser;
     const post = await Post.findById(postId).populate({
       path: "comments",
       model: Comment,
@@ -18,21 +23,31 @@ export async function GET(req: Request, route: { params: { postId: string } }) {
         model: User,
         select: "name email profileImage _id username",
       },
-      options: { sort: { likes: -1 } },
+      options: { sort: { createdAt: -1 } },
     });
-    const filteredComments = post.comments.map((item: any) => ({
+    if (!post) {
+      return NextResponse.json([]);
+    }
+    const filteredComments = (post.comments || []).map((item: any) => ({
+      _id: item._id,
       body: item.body,
       createdAt: item.createdAt,
-      user: {
-        _id: item.user._id,
-        name: item.user.name,
-        username: item.user.username,
-        profileImage: item.user.profileImage,
-        email: item.user.email,
-      },
-      likes: item.likes.length,
-      hasLiked: item.likes.includes(currentUser._id),
-      _id: item._id,
+      user: item.user
+        ? {
+            _id: item.user._id,
+            name: item.user.name,
+            username: item.user.username,
+            profileImage: item.user.profileImage,
+            email: item.user.email,
+          }
+        : null,
+      likes: Array.isArray(item.likes) ? item.likes.length : 0,
+      hasLiked:
+        currentUser?._id && Array.isArray(item.likes)
+          ? item.likes.some(
+              (id: any) => id.toString() === currentUser._id.toString(),
+            )
+          : false,
     }));
     return NextResponse.json(filteredComments);
   } catch (error) {

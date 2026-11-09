@@ -7,7 +7,7 @@ const NotificationSchema = new mongoose.Schema(
       ref: "User",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 const Notification =
   mongoose.models.Notification ||

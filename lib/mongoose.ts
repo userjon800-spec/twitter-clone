@@ -22,14 +22,14 @@ export const connectToDatabase = async () => {
   }
   if (!cached.promise) {
     const options: ConnectOptions = {
-      dbName: "twitter-x",
+      dbName: process.env.MONGO_DB_NAME || "twitter-x-clone",
       autoCreate: true,
     };
     cached.promise = mongoose
       .connect(MONGO_URI, options)
       .then((m) => {
         cached.conn = m;
-        console.log("Connected to MongoDB");
+        console.log(`Connected to MongoDB (Database: "${m.connection.name}")`);
         return m;
       })
       .catch((err) => {

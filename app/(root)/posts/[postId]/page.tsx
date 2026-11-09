@@ -9,8 +9,14 @@ import axios from "axios";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-const Page = ({ params }: { params: { postId: string } }) => {
+import Image from "next/image";
+import FormattedText from "@/components/shared/formattedText";
+import PostSkeleton from "@/components/shared/postSkeleton";
+const Page = () => {
+  const routerParams = useParams();
+  const postId = routerParams?.postId as string;
   let { data: session, status }: any = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingComment, setIsFetchingComment] = useState(false);
@@ -18,8 +24,9 @@ const Page = ({ params }: { params: { postId: string } }) => {
   const [comments, setComments] = useState<IPost[]>([]);
   let getPost = async () => {
     try {
+      if (!postId) return;
       setIsLoading(true);
-      let { data } = await axios.get(`/api/posts/${params.postId}`);
+      let { data } = await axios.get(`/api/posts/${postId}`);
       setPost(data);
 
       setIsLoading(false);
@@ -30,8 +37,9 @@ const Page = ({ params }: { params: { postId: string } }) => {
   };
   let getComment = async () => {
     try {
+      if (!postId) return;
       setIsFetchingComment(true);
-      let { data } = await axios.get(`/api/posts/${params.postId}/comments`);
+      let { data } = await axios.get(`/api/posts/${postId}/comments`);
       setComments(data);
       setIsFetchingComment(false);
     } catch (error) {
@@ -40,26 +48,26 @@ const Page = ({ params }: { params: { postId: string } }) => {
     }
   };
   useEffect(() => {
-    getPost();
-    getComment();
+    if (postId) {
+      getPost();
+      getComment();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [postId]);
   return (
     <>
       <Header label="Posts" isBack />
       {isLoading || status === "loading" ? (
-        <div className="flex justify-center items-center h-24">
-          <Loader2 className="animate-spin text-sky-500" />
-        </div>
+        <PostSkeleton count={1} />
       ) : (
         <>
-          <div className="border-b-[1px] border-neutral-800 p-5 cursor-pointer bg-neutral-900 transition">
-            <div className="flex flex-row items-center gap-3">
+          <div className="border-b-[1px] border-neutral-800 p-5 bg-neutral-900 transition">
+            <div className="flex flex-row items-start gap-3">
               <Avatar>
                 <AvatarImage src={post?.user?.profileImage} />
-                <AvatarFallback>{post?.user?.name[0]}</AvatarFallback>
+                <AvatarFallback>{post?.user?.name?.[0] || "U"}</AvatarFallback>
               </Avatar>
-              <div>
+              <div className="w-full">
                 <div className="flex flex-row items-center gap-2">
                   <p className="text-white font-semibold cursor-pointer hover:underline">
                     {post?.user?.name}
@@ -72,26 +80,48 @@ const Page = ({ params }: { params: { postId: string } }) => {
                   <span className="text-neutral-500 text-sm">
                     {post &&
                       post?.createdAt &&
-                      formatDistanceToNowStrict(new Date(post?.createdAt))}
+                      formatDistanceToNowStrict(new Date(post?.createdAt))}{" "}
+                    ago
                   </span>
                 </div>
-                <div className="text-white mt-1">{post?.body}</div>
+                <div className="text-white mt-2 text-lg break-words">
+                  <FormattedText text={post?.body || ""} />
+                </div>
+                {post?.image && (
+                  <div className="mt-3 relative rounded-2xl overflow-hidden border border-neutral-800 max-h-[450px] w-full">
+                    <Image
+                      src={post.image}
+                      alt="Post media"
+                      width={650}
+                      height={400}
+                      className="w-full object-cover max-h-[450px]"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
           <Form
             placeholder="Post your reply?"
-            user={JSON.parse(JSON.stringify(session.currentUser))}
+            user={
+              session?.currentUser
+                ? JSON.parse(JSON.stringify(session.currentUser))
+                : null
+            }
             isComment
             setPosts={setComments}
-            postId={params.postId}
+            postId={postId}
           />
           {comments &&
             comments.map((comment) => (
               <CommentItem
                 comment={comment}
                 key={comment._id}
-                user={JSON.parse(JSON.stringify(session.currentUser))}
+                user={
+                  session?.currentUser
+                    ? JSON.parse(JSON.stringify(session.currentUser))
+                    : null
+                }
                 setComments={setComments}
                 comments={comments}
               />

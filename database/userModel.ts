@@ -15,6 +15,7 @@ let UserSchema = new mongoose.Schema(
     notifications: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Notification" },
     ],
+    bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   },
   { timestamps: true },
 );

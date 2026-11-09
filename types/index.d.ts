@@ -19,17 +19,22 @@ export interface IUser {
   following: string[];
   hasNewNotifications: boolean;
   notifications: string[];
+  bookmarks?: string[];
   isFollowing: boolean;
 }
 export interface IPost {
   body: string;
+  image?: string;
   comments: number;
   createdAt: string;
   likes: number;
+  reposts?: number;
   updatedAt: string;
   user: IUser;
   _id: string;
   hasLiked: boolean;
+  hasReposted?: boolean;
+  hasBookmarked?: boolean;
 }
 export interface ReturnActionType {
   posts?: IPost[];

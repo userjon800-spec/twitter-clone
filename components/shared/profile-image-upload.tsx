@@ -30,6 +30,7 @@ const ProfileImageUpload = ({ onChange, profileImage }: Props) => {
   );
   const { getInputProps, getRootProps } = useDropzone({
     maxFiles: 1,
+    maxSize: 3 * 1024 * 1024,
     onDrop: handleDrop,
     accept: {
       "image/jpeg": [],

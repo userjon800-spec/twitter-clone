@@ -2,11 +2,18 @@ import mongoose from "mongoose";
 const PostSchema = new mongoose.Schema(
   {
     body: String,
+    image: String,
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
     likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    reposts: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

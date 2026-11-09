@@ -19,12 +19,12 @@ const User = ({ user, onChangeFollowing, isFollow, following }: Props) => {
   let router = useRouter();
   const onFollow = async () => {
     try {
+      if (!session?.currentUser?._id) return;
       setIsLoading(true);
       await axios.put("/api/follows", {
         userId: user._id,
-        currentUserId: session.currentUser._id,
       });
-      let updatedFollowing = [...(following as IUser[]), user];
+      let updatedFollowing = [...((following as IUser[]) || []), user];
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       onChangeFollowing && onChangeFollowing(updatedFollowing);
       router.refresh();
@@ -36,11 +36,11 @@ const User = ({ user, onChangeFollowing, isFollow, following }: Props) => {
   };
   const onUnfollow = async () => {
     try {
+      if (!session?.currentUser?._id) return;
       setIsLoading(true);
       await axios.delete("/api/follows", {
         data: {
           userId: user._id,
-          currentUserId: session.currentUser._id,
         },
       });
       router.refresh();
@@ -56,7 +56,7 @@ const User = ({ user, onChangeFollowing, isFollow, following }: Props) => {
       <div className="flex gap-2 cursor-pointer">
         <Avatar>
           <AvatarImage src={user.profileImage} />
-          <AvatarFallback>{user.name[0]}</AvatarFallback>
+          <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
           <p className="text-white font-semibold text-sm line-clamp-1">
@@ -69,8 +69,13 @@ const User = ({ user, onChangeFollowing, isFollow, following }: Props) => {
           </p>
         </div>
       </div>
-      {isFollow && user._id !== session.currentUser?._id ? (
-        user.followers.includes(session?.currentUser?._id) ? (
+      {isFollow &&
+      session?.currentUser?._id &&
+      user._id !== session.currentUser._id ? (
+        Array.isArray(user.followers) &&
+        user.followers.some(
+          (f: any) => f.toString() === session.currentUser._id.toString(),
+        ) ? (
           <Buttons
             label={"Unfollow"}
             type="button"

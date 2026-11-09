@@ -109,13 +109,7 @@ const EditForm = ({ user }: Props) => {
           )}
         />
 
-        <Buttons
-          type="submit"
-          label={"Save"}
-          secondary
-          large
-          fullWidhth
-        />
+        <Buttons type="submit" label={"Save"} secondary large fullWidhth />
       </form>
     </Form>
   );

@@ -58,13 +58,13 @@ const FollowUser = ({ user, setFollowing }: Props) => {
       });
       if (userId === session?.currentUser?._id) {
         setFollowing((prev) =>
-          prev.filter((following) => following._id !== user._id)
+          prev.filter((following) => following._id !== user._id),
         );
       }
       setProfile((prev) => ({
         ...prev,
         followers: prev.followers.filter(
-          (follower) => follower !== session?.currentUser?._id
+          (follower) => follower !== session?.currentUser?._id,
         ),
       }));
       router.refresh();
